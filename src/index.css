@@ -13,8 +13,12 @@
 :root {
   /* Colors */
   --color-primary: #4f46e5;
-  --color-text: #111;
-  --color-bg: #fff;
+  --text-color: #dedede;
+  --bg-color: #111111;
+  --green-color: #6eb684;
+  --red-color: #ab5a62;
+  --yellow-color: #d6c07d;
+  --blue-color: #3c6293;
 
   /* Font family */
   --font-family-base: "Sora", sans-serif;
@@ -65,12 +69,20 @@
 ========================= */
 
 body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
   font-family: var(--font-family-base);
   font-size: var(--font-sm);
   font-weight: var(--font-weight-normal);
   line-height: var(--line-height-normal);
 }
 
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
 /* =========================
    3. GLOBAL ELEMENTS
 ========================= */
@@ -107,7 +119,6 @@ p {
   width: min(1200px, 90%);
   margin-inline: auto;
   padding: var(--space-md);
-  border: 1px solid red;
 }
 
 /* =========================
@@ -115,15 +126,17 @@ p {
 ========================= */
 
 .card {
-  background: var(--color-bg);
+  background: var(--bg-color);
   padding: var(--space-lg);
   border-radius: var(--radius);
 }
 
-.button {
+button {
+  appearance: none;
+  border: none;
   display: inline-block;
   padding: var(--space-sm) var(--space-md);
-  background: var(--color-primary);
+  background: var(--blue-color);
   color: white;
   font-size: var(--font-md);
   line-height: var(--line-height-normal);
