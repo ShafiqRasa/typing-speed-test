@@ -1,10 +1,10 @@
-import NavBar, { Difficulty } from "./components";
+import NavBar, { Mode } from "./components";
 
 function App() {
   return (
     <main className="container">
       <NavBar />
-      <Difficulty />
+      <Mode />
     </main>
   );
 }
