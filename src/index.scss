@@ -12,13 +12,13 @@
 
 :root {
   /* Colors */
-  --color-primary: #4f46e5;
   --text-color: #dedede;
   --bg-color: #111111;
   --green-color: #6eb684;
   --red-color: #ab5a62;
   --yellow-color: #d6c07d;
-  --blue-color: #3c6293;
+  --blue-color: #4f46e5;
+  --gray-color: #272727;
 
   /* Font family */
   --font-family-base: "Sora", sans-serif;
@@ -131,19 +131,11 @@ p {
   border-radius: var(--radius);
 }
 
-button {
-  appearance: none;
-  border: none;
-  display: inline-block;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--blue-color);
-  color: white;
-  font-size: var(--font-md);
-  line-height: var(--line-height-normal);
-  cursor: pointer;
-  border-radius: var(--radius);
-}
-
 /* =========================
    6. UTILITIES
 ========================= */
+
+.center-item {
+  display: grid;
+  place-items: center;
+}
