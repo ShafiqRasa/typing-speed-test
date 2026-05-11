@@ -1,13 +1,10 @@
-import NavBar, { CustomButton } from "./components";
+import NavBar, { Difficulty } from "./components";
 
 function App() {
   return (
     <main className="container">
       <NavBar />
-      <CustomButton
-        btnType="gray"
-        handleButton={() => console.log("Button clicked!")}
-      />
+      <Difficulty />
     </main>
   );
 }
