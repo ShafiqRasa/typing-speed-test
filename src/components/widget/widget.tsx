@@ -7,7 +7,8 @@ type widgetProps = {
 const Widget: React.FC<widgetProps> = ({ label, children }) => {
   return (
     <Wrapper>
-      {label}: <strong className={label.toLowerCase()}>{children}</strong>
+      <p>{label}: </p>
+      <b className={label.toLowerCase()}>{children}</b>
     </Wrapper>
   );
 };
