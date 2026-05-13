@@ -1,4 +1,4 @@
-import { DescriptionList } from "./difficulty.styles";
+import { Wrapper, DescriptionList, Select } from "./difficulty.styles";
 
 const Difficulty = () => {
   const handleDifficulty = (difficulty: string) => {
@@ -6,18 +6,27 @@ const Difficulty = () => {
   };
 
   return (
-    <DescriptionList>
-      <dt>Difficulty:</dt>
-      <dd>
-        <button onClick={() => handleDifficulty("easy")}>Easy</button>
-      </dd>
-      <dd>
-        <button onClick={() => handleDifficulty("medium")}>Medium</button>
-      </dd>
-      <dd>
-        <button onClick={() => handleDifficulty("hard")}>Hard</button>
-      </dd>
-    </DescriptionList>
+    <Wrapper>
+      <Select onChange={(e) => handleDifficulty(e.target.value)}>
+        <option value="easy" defaultChecked={true}>
+          Easy
+        </option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </Select>
+      <DescriptionList>
+        <dt>Difficulty:</dt>
+        <dd>
+          <button onClick={() => handleDifficulty("easy")}>Easy</button>
+        </dd>
+        <dd>
+          <button onClick={() => handleDifficulty("medium")}>Medium</button>
+        </dd>
+        <dd>
+          <button onClick={() => handleDifficulty("hard")}>Hard</button>
+        </dd>
+      </DescriptionList>
+    </Wrapper>
   );
 };
 export default Difficulty;

@@ -1,10 +1,9 @@
-import NavBar, { Mode } from "./components";
+import NavBar from "./components";
 
 function App() {
   return (
     <main className="container">
       <NavBar />
-      <Mode />
     </main>
   );
 }
