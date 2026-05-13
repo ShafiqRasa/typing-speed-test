@@ -2,9 +2,7 @@ import styled from "styled-components";
 
 export const Wrapper = styled.p`
   color: gray;
-  strong {
-    font-weight: bold;
-  }
+
   .wpm {
     color: var(--text-color);
   }
