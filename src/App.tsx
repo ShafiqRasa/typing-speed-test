@@ -1,10 +1,12 @@
-import NavBar, { Mode } from "./components";
+import NavBar, { Widget } from "./components";
 
 function App() {
   return (
     <main className="container">
       <NavBar />
-      <Mode />
+      <Widget label="WPM">120</Widget>
+      <Widget label="Accuracy">95%</Widget>
+      <Widget label="Time">60s</Widget>
     </main>
   );
 }

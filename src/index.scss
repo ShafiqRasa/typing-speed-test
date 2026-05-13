@@ -97,7 +97,7 @@ button {
   padding: var(--space-sm) var(--space-md);
   background: var(--blue-color);
   color: white;
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   line-height: var(--line-height-normal);
   cursor: pointer;
   border-radius: var(--radius);
@@ -165,9 +165,9 @@ dd {
 
 @media screen and (min-width: 768px) {
   button {
-    font-size: var(--font-md);
+    font-size: var(--font-sm);
   }
   dl {
-    font-size: var(--font-md);
+    font-size: var(--font-sm);
   }
 }
