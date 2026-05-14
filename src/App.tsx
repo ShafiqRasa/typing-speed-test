@@ -1,23 +1,38 @@
-import NavBar from "./components";
+import { TextArea, Wrapper } from "./app.styles";
+import NavBar, { CustomButton, Difficulty, Mode, Widget } from "./components";
 import { useAppSelector } from "./store/hooks";
 
 function App() {
   const typingText = useAppSelector((state) => state.typing.currentText);
   return (
-    <main className="container">
+    <Wrapper className="container">
       <NavBar />
 
-      {typingText ? (
-        <div className="typing-text">
-          <p>{typingText}</p>
+      <div className="typing-container">
+        <div className="score-and-settings">
+          <div className="scores-container">
+            <Widget label="WPM">0</Widget>
+            <Widget label="Accuracy">0</Widget>
+            <Widget label="Time">0</Widget>
+          </div>
+          <div className="settings-container">
+            <Difficulty />
+            <Mode />
+          </div>
         </div>
-      ) : (
-        <div className="welcome-message">
-          <h1>Welcome to the Typing Speed Test!</h1>
-          <p>Start typing to see your speed and accuracy.</p>
+        <TextArea
+          className="typing-area"
+          value={typingText}
+          onChange={(e) => console.log(e.target.value)}
+        />
+        <div className="center-item">
+          <CustomButton
+            btnType="gray"
+            handleButton={() => console.log("restart test!")}
+          />
         </div>
-      )}
-    </main>
+      </div>
+    </Wrapper>
   );
 }
 
