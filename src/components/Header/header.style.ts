@@ -8,7 +8,7 @@ export const Header = styled.header`
   .logo {
     width: 32px;
     height: 32px;
-    background-image: url("/src/assets/images/logo-small.svg");
+    background-image: url("/images/logo-small.svg");
     background-size: contain;
     background-repeat: no-repeat;
   }
@@ -27,7 +27,7 @@ export const Header = styled.header`
     .logo {
       width: 267px;
       height: 40px;
-      background-image: url("/src/assets/images/logo-large.svg");
+      background-image: url("/images/logo-large.svg");
     }
   }
 `;

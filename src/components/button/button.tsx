@@ -23,8 +23,7 @@ const Button: React.FC<ButtonProps> = ({
   if (btnType === BUTTON_TYPES.gray) {
     return (
       <SecondaryGrayButton onClick={() => handleButton()}>
-        Restart Test{" "}
-        <img src="/src/assets/images/icon-restart.svg" alt="restart" />{" "}
+        Restart Test <img src="/images/icon-restart.svg" alt="restart" />{" "}
       </SecondaryGrayButton>
     );
   }
