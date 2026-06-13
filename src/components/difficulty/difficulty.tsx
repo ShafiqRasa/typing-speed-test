@@ -2,8 +2,7 @@ import { Wrapper, DescriptionList, Select } from "./difficulty.styles";
 import { setDifficulty } from "../../store/typingSlice";
 import data from "../../utils/data.json";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-
-type DifficultyLevel = "easy" | "medium" | "hard";
+import type { DifficultyLevel } from "../../utils/typingText";
 
 const Difficulty = () => {
   const dispatch = useAppDispatch();

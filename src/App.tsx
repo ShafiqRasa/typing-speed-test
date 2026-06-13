@@ -5,7 +5,6 @@ import { useAppSelector } from "./store/hooks";
 
 function App() {
   const typingText = useAppSelector((state) => state.typing.currentText);
-  const typingTextArr = typingText.trim().split("");
 
   const [typing, setTyping] = useState<string>();
 

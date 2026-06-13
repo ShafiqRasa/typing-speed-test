@@ -1,10 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { easy } from "../utils/data.json";
+import {
+  getTextForDifficulty,
+  type DifficultyLevel,
+} from "../utils/typingText";
 
 type TypingState = {
-  difficulty: "easy" | "medium" | "hard";
+  difficulty: DifficultyLevel;
   mode: "time" | "passage";
   currentText: string;
 };
@@ -12,7 +15,7 @@ type TypingState = {
 const initialState: TypingState = {
   difficulty: "easy",
   mode: "passage",
-  currentText: easy[0].text,
+  currentText: getTextForDifficulty("easy"),
 };
 
 export const typingSlice = createSlice({
@@ -22,11 +25,9 @@ export const typingSlice = createSlice({
     setCurrentText: (state, action: PayloadAction<string>) => {
       state.currentText = action.payload;
     },
-    setDifficulty: (
-      state,
-      action: PayloadAction<TypingState["difficulty"]>,
-    ) => {
+    setDifficulty: (state, action: PayloadAction<DifficultyLevel>) => {
       state.difficulty = action.payload;
+      state.currentText = getTextForDifficulty(action.payload);
     },
     setMode: (state, action: PayloadAction<TypingState["mode"]>) => {
       state.mode = action.payload;
