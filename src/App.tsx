@@ -1,9 +1,20 @@
-import { TextArea, Wrapper } from "./app.styles";
+import { useState } from "react";
+import { TextArea, Wrapper, TypingArea } from "./app.styles";
 import NavBar, { CustomButton, Difficulty, Mode, Widget } from "./components";
 import { useAppSelector } from "./store/hooks";
 
 function App() {
   const typingText = useAppSelector((state) => state.typing.currentText);
+  const typingTextArr = typingText.trim().split("");
+
+  const [typing, setTyping] = useState<string>();
+
+  const handleTyping: React.ChangeEventHandler<HTMLTextAreaElement> = (
+    event,
+  ) => {
+    setTyping(event.currentTarget.value);
+  };
+
   return (
     <Wrapper className="container">
       <NavBar />
@@ -20,11 +31,16 @@ function App() {
             <Mode />
           </div>
         </div>
-        <TextArea
-          className="typing-area"
-          value={typingText}
-          onChange={(e) => console.log(e.target.value)}
-        />
+        <TypingArea>
+          <div className="shadow-text">{typingText}</div>
+
+          <TextArea
+            className="text-area"
+            value={typing}
+            onChange={(e) => handleTyping(e)}
+            autoFocus
+          />
+        </TypingArea>
         <div className="center-item">
           <CustomButton
             btnType="gray"

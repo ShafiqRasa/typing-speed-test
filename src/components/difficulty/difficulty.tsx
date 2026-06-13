@@ -1,30 +1,44 @@
 import { Wrapper, DescriptionList, Select } from "./difficulty.styles";
+import { setDifficulty } from "../../store/typingSlice";
+import data from "../../utils/data.json";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+
+type DifficultyLevel = "easy" | "medium" | "hard";
 
 const Difficulty = () => {
-  const handleDifficulty = (difficulty: string) => {
-    console.log(`Selected difficulty: ${difficulty}`);
+  const dispatch = useAppDispatch();
+  const difficulty = useAppSelector((state) => state.typing.difficulty);
+
+  const handleDifficulty = (level: DifficultyLevel) => {
+    dispatch(setDifficulty(level));
   };
 
   return (
     <Wrapper>
-      <Select onChange={(e) => handleDifficulty(e.target.value)}>
-        <option value="easy" defaultChecked={true}>
-          Easy
-        </option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
+      <Select
+        value={difficulty}
+        onChange={(e) => handleDifficulty(e.target.value as DifficultyLevel)}
+      >
+        {Object.keys(data).map((key) => (
+          <option key={key} value={key}>
+            {key}
+          </option>
+        ))}
       </Select>
       <DescriptionList>
         <dt>Difficulty:</dt>
-        <dd>
-          <button onClick={() => handleDifficulty("easy")}>Easy</button>
-        </dd>
-        <dd>
-          <button onClick={() => handleDifficulty("medium")}>Medium</button>
-        </dd>
-        <dd>
-          <button onClick={() => handleDifficulty("hard")}>Hard</button>
-        </dd>
+
+        {Object.keys(data).map((key) => (
+          <dd key={key}>
+            <button
+              onClick={() => handleDifficulty(key as DifficultyLevel)}
+              disabled={key === difficulty}
+              data-selected={key === difficulty}
+            >
+              {key}{" "}
+            </button>
+          </dd>
+        ))}
       </DescriptionList>
     </Wrapper>
   );

@@ -33,6 +33,14 @@ export const DescriptionList = styled.dl`
       color: var(--text-color);
     }
   }
+
+  [data-selected="true"] {
+    opacity: 0.7;
+
+    &:hover {
+      cursor: default;
+    }
+  }
 `;
 
 export const Wrapper = styled.div`

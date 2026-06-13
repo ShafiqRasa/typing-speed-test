@@ -103,6 +103,10 @@ button {
   border-radius: var(--radius);
 }
 
+textarea {
+  font-size: var(--font-lg);
+  line-height: var(--line-height-normal);
+}
 img {
   max-width: 100%;
   display: block;
