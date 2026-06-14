@@ -13,6 +13,7 @@ import { setCurrentText, setDifficulty, setMode } from "./store/typingSlice";
 
 const FIRST_VISIT_KEY = "typing_app_first_visit";
 const SETTINGS_KEY = "typing-speed-test-settings";
+const HIGH_SCORE_KEY = "typing-speed-test-high-score";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -26,6 +27,16 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [highScore, setHighScore] = useState<{ wpm: number; accuracy: number }>(
+    () => {
+      try {
+        const saved = localStorage.getItem(HIGH_SCORE_KEY);
+        return saved ? JSON.parse(saved) : { wpm: 0, accuracy: 0 };
+      } catch {
+        return { wpm: 0, accuracy: 0 };
+      }
+    },
+  );
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const previousSettings = useRef({
     difficulty: state.difficulty,
@@ -79,6 +90,24 @@ function App() {
     return () => window.clearTimeout(timeoutId);
   }, [state.difficulty, state.mode]);
 
+  const correctCharacters = useMemo(
+    () =>
+      typing.split("").reduce((count, char, index) => {
+        return count + (char === state.currentText[index] ? 1 : 0);
+      }, 0),
+    [typing, state.currentText],
+  );
+
+  const accuracy = typing.length
+    ? Math.round((correctCharacters / typing.length) * 100)
+    : 100;
+
+  const elapsedSeconds = state.mode === "time" ? 60 - timeLeft : elapsedTime;
+  const wpm =
+    elapsedSeconds > 0
+      ? Math.round(correctCharacters / 5 / (elapsedSeconds / 60))
+      : 0;
+
   useEffect(() => {
     if (!isRunning || completed) return undefined;
 
@@ -105,24 +134,6 @@ function App() {
     return () => window.clearInterval(timer);
   }, [completed, isRunning, state.mode]);
 
-  const correctCharacters = useMemo(
-    () =>
-      typing.split("").reduce((count, char, index) => {
-        return count + (char === state.currentText[index] ? 1 : 0);
-      }, 0),
-    [typing, state.currentText],
-  );
-
-  const accuracy = typing.length
-    ? Math.round((correctCharacters / typing.length) * 100)
-    : 100;
-
-  const elapsedSeconds = state.mode === "time" ? 60 - timeLeft : elapsedTime;
-  const wpm =
-    elapsedSeconds > 0
-      ? Math.round(correctCharacters / 5 / (elapsedSeconds / 60))
-      : 0;
-
   const handleStart = () => {
     setHasVisited(true);
     localStorage.setItem(FIRST_VISIT_KEY, "true");
@@ -143,6 +154,16 @@ function App() {
   };
 
   const finishTest = () => {
+    setHighScore((prev) => {
+      const next = {
+        wpm: Math.max(prev.wpm, wpm),
+        accuracy: Math.max(prev.accuracy, accuracy),
+      };
+
+      localStorage.setItem(HIGH_SCORE_KEY, JSON.stringify(next));
+      return next;
+    });
+
     setIsRunning(false);
     setCompleted(true);
   };
@@ -190,13 +211,15 @@ function App() {
 
   return (
     <Wrapper className="">
-      <NavBar />
+      <NavBar bestWpm={highScore.wpm} />
 
       <div className="typing-container">
         <div className="score-and-settings container">
           <div className="scores-container">
             <Widget label="WPM">{wpm}</Widget>
             <Widget label="Accuracy">{accuracy}%</Widget>
+            {/* <Widget label="Best WPM">{highScore.wpm}</Widget> */}
+            {/* <Widget label="Best Accuracy">{highScore.accuracy}%</Widget> */}
             <Widget label="Time">
               {state.mode === "time" ? `${timeLeft}s` : `${elapsedTime}s`}
             </Widget>

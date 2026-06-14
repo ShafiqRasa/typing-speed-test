@@ -1,6 +1,10 @@
 import { Header } from "./header.style";
 
-const NavBar = () => {
+type NavBarProps = {
+  bestWpm: number;
+};
+
+const NavBar = ({ bestWpm }: NavBarProps) => {
   return (
     <Header className="container">
       {/* <img src="/src/assets/images/logo-small.svg" alt="logo" /> */}
@@ -9,7 +13,7 @@ const NavBar = () => {
         <img src="/images/icon-personal-best.svg" alt="trophy" />
         <div>
           <p>
-            <span>Best:</span> {0} WPM
+            <span>Best:</span> {bestWpm} WPM
           </p>
         </div>
       </div>
