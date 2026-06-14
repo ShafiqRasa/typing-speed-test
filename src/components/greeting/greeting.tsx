@@ -1,11 +1,12 @@
 import { CustomButton } from "..";
+import { withBlueOverlay } from "../hoc/withBlueOverlay";
 import { Wrapper } from "./greeting.styles";
 
 type GreetingProps = {
   onStart: () => void;
 };
 
-const Greeting = ({ onStart }: GreetingProps) => {
+const GreetingBase = ({ onStart }: GreetingProps) => {
   return (
     <Wrapper>
       <p className="eyebrow">Welcome to your typing lab</p>
@@ -19,5 +20,7 @@ const Greeting = ({ onStart }: GreetingProps) => {
     </Wrapper>
   );
 };
+
+const Greeting = withBlueOverlay(GreetingBase);
 
 export default Greeting;

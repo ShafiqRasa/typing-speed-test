@@ -5,6 +5,7 @@ import NavBar, {
   Difficulty,
   Greeting,
   Mode,
+  TestCompletedMessage,
   Widget,
 } from "./components";
 import { useAppSelector, useAppDispatch } from "./store/hooks";
@@ -202,14 +203,13 @@ function App() {
             </TypingArea>
             <div className="center-item">
               {completed && (
-                <div className="results-card">
-                  <strong>Test complete!</strong>
-                  <p>
-                    WPM: {wpm} • Accuracy: {accuracy}% • Correct:{" "}
-                    {correctCharacters} • Incorrect:{" "}
-                    {typing.length - correctCharacters}
-                  </p>
-                </div>
+                <TestCompletedMessage
+                  wpm={wpm}
+                  accuracy={accuracy}
+                  correctCharacters={correctCharacters}
+                  incorrectCharacters={typing.length - correctCharacters}
+                  onRestart={handleRestart}
+                />
               )}
               <CustomButton btnType="gray" handleButton={handleRestart} />
             </div>

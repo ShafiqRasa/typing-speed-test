@@ -1,9 +1,6 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.section`
-  position: absolute;
-  inset: 0;
-  z-index: 5;
+export const Wrapper = styled.article`
   display: flex;
   flex-direction: column;
   align-items: center;
