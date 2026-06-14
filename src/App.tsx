@@ -168,7 +168,8 @@ function App() {
     const isTyped = index < typing.length;
     const isCorrect = isTyped && typedChar === char;
     const isIncorrect = isTyped && typedChar !== char;
-    const isCurrent = index === typing.length && isRunning;
+    const currentIndex = typing.length === 0 ? 0 : typing.length;
+    const isCurrent = index === currentIndex && !completed;
 
     return (
       <span
