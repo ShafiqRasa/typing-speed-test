@@ -27,6 +27,10 @@ function App() {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [completed, setCompleted] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const previousSettings = useRef({
+    difficulty: state.difficulty,
+    mode: state.mode,
+  });
 
   useEffect(() => {
     const saved = localStorage.getItem(SETTINGS_KEY);
@@ -51,6 +55,28 @@ function App() {
       SETTINGS_KEY,
       JSON.stringify({ difficulty: state.difficulty, mode: state.mode }),
     );
+  }, [state.difficulty, state.mode]);
+
+  useEffect(() => {
+    const difficultyChanged =
+      previousSettings.current.difficulty !== state.difficulty;
+    const modeChanged = previousSettings.current.mode !== state.mode;
+
+    if (!difficultyChanged && !modeChanged) return undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      setTyping("");
+      setElapsedTime(0);
+      setTimeLeft(60);
+      setCompleted(false);
+      setIsRunning(false);
+      previousSettings.current = {
+        difficulty: state.difficulty,
+        mode: state.mode,
+      };
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [state.difficulty, state.mode]);
 
   useEffect(() => {
