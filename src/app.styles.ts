@@ -15,6 +15,7 @@ export const TextArea = styled.textarea`
 
 export const TypingArea = styled.div`
   position: relative;
+  height: 100%;
   font-size: var(--font-lg);
   line-height: var(--line-height-normal);
   .shadow-text {
@@ -28,15 +29,30 @@ export const Wrapper = styled.main`
   min-height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr;
+
   .typing-container {
+    position: relative;
     align-self: center;
-    height: 80vh;
+    min-height: 80vh;
+    height: auto;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr;
     row-gap: var(--space-lg);
     margin-top: var(--space-lg);
 
+    .content {
+      position: relative;
+
+      .textarea-btn-container {
+        height: 100%;
+        display: grid;
+        grid-template-rows: 1fr auto;
+        row-gap: 1rem;
+      }
+    }
     .score-and-settings {
+      position: relative;
+      z-index: 2;
       display: flex;
       flex-direction: column;
       row-gap: var(--space-lg);
@@ -60,6 +76,11 @@ export const Wrapper = styled.main`
       & > div {
         flex-grow: 1;
       }
+    }
+
+    .typing-panel {
+      position: relative;
+      z-index: 1;
     }
 
     // lager screens

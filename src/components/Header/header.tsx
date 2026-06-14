@@ -2,7 +2,7 @@ import { Header } from "./header.style";
 
 const NavBar = () => {
   return (
-    <Header>
+    <Header className="container">
       {/* <img src="/src/assets/images/logo-small.svg" alt="logo" /> */}
       <div className="logo" />
       <div className="best-wpm">

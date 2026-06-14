@@ -1,10 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextArea, Wrapper, TypingArea } from "./app.styles";
-import NavBar, { CustomButton, Difficulty, Mode, Widget } from "./components";
+import NavBar, {
+  CustomButton,
+  Difficulty,
+  Greeting,
+  Mode,
+  Widget,
+} from "./components";
 import { useAppSelector, useAppDispatch } from "./store/hooks";
 import { setCurrentText } from "./store/typingSlice";
 
+const FIRST_VISIT_KEY = "typing_app_first_visit";
+
 function App() {
+  const [hasVisited, setHasVisited] = useState(() => {
+    return localStorage.getItem(FIRST_VISIT_KEY) === "true";
+  });
+
+  useEffect(() => {
+    if (hasVisited) {
+      localStorage.setItem(FIRST_VISIT_KEY, "true");
+    }
+  }, [hasVisited]);
+
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.typing);
 
@@ -17,11 +35,11 @@ function App() {
   };
 
   return (
-    <Wrapper className="container">
+    <Wrapper className="">
       <NavBar />
 
       <div className="typing-container">
-        <div className="score-and-settings">
+        <div className="score-and-settings container">
           <div className="scores-container">
             <Widget label="WPM">0</Widget>
             <Widget label="Accuracy">0</Widget>
@@ -32,21 +50,25 @@ function App() {
             <Mode />
           </div>
         </div>
-        <TypingArea>
-          <div className="shadow-text">{state.currentText}</div>
+        <div className="content">
+          {!hasVisited && <Greeting setHasVisited={setHasVisited} />}
+          <div className="container textarea-btn-container">
+            <TypingArea>
+              <div className="shadow-text">{state.currentText}</div>
 
-          <TextArea
-            className="text-area"
-            value={typing}
-            onChange={(e) => handleTyping(e)}
-            autoFocus
-          />
-        </TypingArea>
-        <div className="center-item">
-          <CustomButton
-            btnType="gray"
-            handleButton={() => dispatch(setCurrentText(state.difficulty))}
-          />
+              <TextArea
+                className="text-area"
+                value={typing}
+                onChange={(e) => handleTyping(e)}
+              />
+            </TypingArea>
+            <div className="center-item">
+              <CustomButton
+                btnType="gray"
+                handleButton={() => dispatch(setCurrentText(state.difficulty))}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </Wrapper>
