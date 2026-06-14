@@ -10,3 +10,6 @@ export const getTextForDifficulty = (
 ): string => {
   return data[difficulty]?.[index]?.text ?? data.easy[0].text;
 };
+
+export const randomIndex = (difficulty: DifficultyLevel) =>
+  Math.floor(Math.random() * data[difficulty].length);

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import {
+  randomIndex,
   getTextForDifficulty,
   type DifficultyLevel,
 } from "../utils/typingText";
@@ -22,8 +23,14 @@ export const typingSlice = createSlice({
   name: "typing",
   initialState,
   reducers: {
-    setCurrentText: (state, action: PayloadAction<string>) => {
-      state.currentText = action.payload;
+    setCurrentText: (
+      state,
+      action: PayloadAction<"easy" | "medium" | "hard">,
+    ) => {
+      state.currentText = getTextForDifficulty(
+        action.payload,
+        randomIndex(state.difficulty),
+      );
     },
     setDifficulty: (state, action: PayloadAction<DifficultyLevel>) => {
       state.difficulty = action.payload;

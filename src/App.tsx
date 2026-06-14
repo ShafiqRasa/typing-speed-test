@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { TextArea, Wrapper, TypingArea } from "./app.styles";
 import NavBar, { CustomButton, Difficulty, Mode, Widget } from "./components";
-import { useAppSelector } from "./store/hooks";
+import { useAppSelector, useAppDispatch } from "./store/hooks";
+import { setCurrentText } from "./store/typingSlice";
 
 function App() {
-  const typingText = useAppSelector((state) => state.typing.currentText);
+  const dispatch = useAppDispatch();
+  const state = useAppSelector((state) => state.typing);
 
   const [typing, setTyping] = useState<string>();
 
@@ -31,7 +33,7 @@ function App() {
           </div>
         </div>
         <TypingArea>
-          <div className="shadow-text">{typingText}</div>
+          <div className="shadow-text">{state.currentText}</div>
 
           <TextArea
             className="text-area"
@@ -43,7 +45,7 @@ function App() {
         <div className="center-item">
           <CustomButton
             btnType="gray"
-            handleButton={() => console.log("restart test!")}
+            handleButton={() => dispatch(setCurrentText(state.difficulty))}
           />
         </div>
       </div>
