@@ -1,3 +1,4 @@
+import { CustomButton } from "..";
 import { Wrapper } from "./greeting.styles";
 
 type GreetingProps = {
@@ -7,9 +8,11 @@ type GreetingProps = {
 const Greeting: React.FC<GreetingProps> = ({ setHasVisited }) => {
   return (
     <Wrapper>
-      <button type="button" onClick={() => setHasVisited(true)}>
-        Start Typing
-      </button>
+      <h3>
+        Welcome to <span>Typing Speed Game</span>
+      </h3>
+      <h4> Customize the typing game to your preferences</h4>
+      <CustomButton btnType="blue" handleButton={() => setHasVisited(true)} />
     </Wrapper>
   );
 };
