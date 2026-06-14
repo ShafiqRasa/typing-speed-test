@@ -57,6 +57,20 @@ export const Wrapper = styled.main`
   display: grid;
   grid-template-rows: auto 1fr;
 
+  @keyframes confetti-fall {
+    0% {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(0, 180px, 0) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
   .typing-container {
     position: relative;
     align-self: center;
