@@ -2,18 +2,22 @@ import { CustomButton } from "..";
 import { Wrapper } from "./greeting.styles";
 
 type GreetingProps = {
-  setHasVisited: React.Dispatch<React.SetStateAction<boolean>>;
+  onStart: () => void;
 };
 
-const Greeting: React.FC<GreetingProps> = ({ setHasVisited }) => {
+const Greeting = ({ onStart }: GreetingProps) => {
   return (
     <Wrapper>
+      <p className="eyebrow">Welcome to your typing lab</p>
       <h3>
-        Welcome to <span>Typing Speed Game</span>
+        Ready to race your <span className="accent">typing speed</span>?
       </h3>
-      <h4> Customize the typing game to your preferences</h4>
-      <CustomButton btnType="blue" handleButton={() => setHasVisited(true)} />
+      <p className="description">
+        Adjust difficulty, choose your mode, and start when you are ready.
+      </p>
+      <CustomButton btnType="blue" handleButton={onStart} />
     </Wrapper>
   );
 };
+
 export default Greeting;

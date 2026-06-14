@@ -51,7 +51,7 @@ function App() {
           </div>
         </div>
         <div className="content">
-          {!hasVisited && <Greeting setHasVisited={setHasVisited} />}
+          {!hasVisited && <Greeting onStart={() => setHasVisited(true)} />}
           <div className="container textarea-btn-container">
             <TypingArea>
               <div className="shadow-text">{state.currentText}</div>
