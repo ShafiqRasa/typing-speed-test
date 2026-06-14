@@ -54,7 +54,7 @@ function App() {
   }, [state.difficulty, state.mode]);
 
   useEffect(() => {
-    if (!isRunning) return undefined;
+    if (!isRunning || completed) return undefined;
 
     if (state.mode === "time") {
       const timer = window.setInterval(() => {
@@ -77,7 +77,7 @@ function App() {
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [isRunning, state.mode]);
+  }, [completed, isRunning, state.mode]);
 
   const correctCharacters = useMemo(
     () =>
@@ -101,8 +101,6 @@ function App() {
     setHasVisited(true);
     localStorage.setItem(FIRST_VISIT_KEY, "true");
     setTyping("");
-    setElapsedTime(0);
-    setTimeLeft(60);
     setCompleted(false);
     setIsRunning(true);
     textAreaRef.current?.focus();
@@ -141,7 +139,9 @@ function App() {
 
   const renderedText = state.currentText.split("").map((char, index) => {
     const typedChar = typing[index] ?? "";
-    const isCorrect = typedChar === char;
+    const isTyped = index < typing.length;
+    const isCorrect = isTyped && typedChar === char;
+    const isIncorrect = isTyped && typedChar !== char;
     const isCurrent = index === typing.length && isRunning;
 
     return (
@@ -149,7 +149,8 @@ function App() {
         key={`${char}-${index}`}
         className={[
           "char",
-          index < typing.length ? (isCorrect ? "correct" : "incorrect") : "",
+          isCorrect ? "correct" : "",
+          isIncorrect ? "incorrect" : "",
           isCurrent ? "current" : "",
         ]
           .filter(Boolean)

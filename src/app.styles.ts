@@ -18,11 +18,33 @@ export const TypingArea = styled.div`
   height: 100%;
   font-size: var(--font-lg);
   line-height: var(--line-height-normal);
+
   .shadow-text {
     position: absolute;
     inset: 0;
     filter: opacity(0.5);
     z-index: -1;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .char {
+    border-bottom: 1px solid transparent;
+  }
+
+  .char.correct {
+    color: #5eff9d;
+  }
+
+  .char.incorrect {
+    color: #ff7b7b;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: #ffb3b3;
+  }
+
+  .char.current {
+    border-bottom-color: #8ecbff;
   }
 `;
 export const Wrapper = styled.main`
