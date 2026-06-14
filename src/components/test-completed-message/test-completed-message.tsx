@@ -16,6 +16,8 @@ const TestCompletedMessage = ({
   incorrectCharacters,
   onRestart,
 }: TestCompletedMessageProps) => {
+  const accuracyTone = accuracy >= 80 ? "#2dd4bf" : "#ef4444";
+
   return (
     <article
       style={{ display: "grid", gap: "0.75rem", justifyItems: "center" }}
@@ -35,8 +37,62 @@ const TestCompletedMessage = ({
         Great job — you finished the test.
       </h3>
       <p style={{ margin: 0, color: "#e6efff", maxWidth: "32rem" }}>
-        WPM: {wpm} • Accuracy: {accuracy}% • Correct: {correctCharacters} •
-        Incorrect: {incorrectCharacters}
+        WPM:{" "}
+        <span
+          className="wmp"
+          style={{
+            background: "#ffffff",
+            color: "#0f172a",
+            padding: "0.12rem 0.35rem",
+            borderRadius: "999px",
+            fontWeight: 700,
+          }}
+        >
+          {" "}
+          {wpm}
+        </span>{" "}
+        • Accuracy:{" "}
+        <span
+          className="accuracy"
+          style={{
+            background:
+              accuracy >= 80
+                ? "rgba(45, 212, 191, 0.14)"
+                : "rgba(239, 68, 68, 0.12)",
+            color: accuracyTone,
+            padding: "0.12rem 0.35rem",
+            borderRadius: "999px",
+            fontWeight: 700,
+          }}
+        >
+          {accuracy}%
+        </span>{" "}
+        • Correct:{" "}
+        <span
+          className="correct"
+          style={{
+            background: "rgba(34, 197, 94, 0.18)",
+            color: "#86efac",
+            padding: "0.12rem 0.35rem",
+            borderRadius: "999px",
+            fontWeight: 700,
+          }}
+        >
+          {correctCharacters}
+        </span>{" "}
+        • Incorrect:{" "}
+        <span
+          className="incorrect"
+          style={{
+            background: "rgba(239, 68, 68, 0.18)",
+            color: "#fca5a5",
+            padding: "0.12rem 0.35rem",
+            borderRadius: "999px",
+            fontWeight: 700,
+          }}
+        >
+          {incorrectCharacters}
+        </span>
       </p>
       <CustomButton btnType="blue" handleButton={onRestart} />
     </article>
