@@ -132,7 +132,7 @@ function App() {
 
     setTyping(value);
 
-    if (value === state.currentText) {
+    if (value.length === state.currentText.length) {
       finishTest();
     }
   };

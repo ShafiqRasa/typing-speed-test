@@ -3,14 +3,18 @@ import styled from "styled-components";
 export const TextArea = styled.textarea`
   width: 100%;
   height: 100%;
+  position: absolute;
+  inset: 0;
   background: transparent;
   outline: none;
   border: 1px solid var(--gray-color);
   border-left-color: transparent;
   border-right-color: transparent;
   resize: none;
-  color: white;
-  z-index: 1;
+  color: transparent;
+  caret-color: transparent;
+  z-index: 2;
+  text-shadow: none;
 `;
 
 export const TypingArea = styled.div`
@@ -20,12 +24,12 @@ export const TypingArea = styled.div`
   line-height: var(--line-height-normal);
 
   .shadow-text {
-    position: absolute;
+    position: relative;
     inset: 0;
-    filter: opacity(0.5);
-    z-index: -1;
+    color: rgba(189, 189, 189, 0.85);
     white-space: pre-wrap;
     word-break: break-word;
+    z-index: 1;
   }
 
   .char {
