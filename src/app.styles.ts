@@ -49,6 +49,7 @@ export const TypingArea = styled.div`
 
   .char.current {
     border-bottom-color: #8ecbff;
+    background: rgba(73, 72, 72, 0.85);
   }
 `;
 export const Wrapper = styled.main`
