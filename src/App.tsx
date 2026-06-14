@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { TextArea, Wrapper, TypingArea } from "./app.styles";
 import NavBar, {
   CustomButton,
@@ -8,31 +8,156 @@ import NavBar, {
   Widget,
 } from "./components";
 import { useAppSelector, useAppDispatch } from "./store/hooks";
-import { setCurrentText } from "./store/typingSlice";
+import { setCurrentText, setDifficulty, setMode } from "./store/typingSlice";
 
 const FIRST_VISIT_KEY = "typing_app_first_visit";
+const SETTINGS_KEY = "typing-speed-test-settings";
 
 function App() {
-  const [hasVisited, setHasVisited] = useState(() => {
-    return localStorage.getItem(FIRST_VISIT_KEY) === "true";
-  });
-
-  useEffect(() => {
-    if (hasVisited) {
-      localStorage.setItem(FIRST_VISIT_KEY, "true");
-    }
-  }, [hasVisited]);
-
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.typing);
 
-  const [typing, setTyping] = useState<string>();
+  const [hasVisited, setHasVisited] = useState(
+    () => localStorage.getItem(FIRST_VISIT_KEY) === "true",
+  );
+  const [typing, setTyping] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [completed, setCompleted] = useState(false);
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(SETTINGS_KEY);
+    if (!saved) return;
+
+    try {
+      const parsed = JSON.parse(saved) as {
+        difficulty?: string;
+        mode?: "time" | "passage";
+      };
+
+      if (parsed.difficulty)
+        dispatch(setDifficulty(parsed.difficulty as never));
+      if (parsed.mode) dispatch(setMode(parsed.mode));
+    } catch {
+      localStorage.removeItem(SETTINGS_KEY);
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      SETTINGS_KEY,
+      JSON.stringify({ difficulty: state.difficulty, mode: state.mode }),
+    );
+  }, [state.difficulty, state.mode]);
+
+  useEffect(() => {
+    if (!isRunning) return undefined;
+
+    if (state.mode === "time") {
+      const timer = window.setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            window.clearInterval(timer);
+            setIsRunning(false);
+            setCompleted(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => window.clearInterval(timer);
+    }
+
+    const timer = window.setInterval(() => {
+      setElapsedTime((prev) => prev + 1);
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [isRunning, state.mode]);
+
+  const correctCharacters = useMemo(
+    () =>
+      typing.split("").reduce((count, char, index) => {
+        return count + (char === state.currentText[index] ? 1 : 0);
+      }, 0),
+    [typing, state.currentText],
+  );
+
+  const accuracy = typing.length
+    ? Math.round((correctCharacters / typing.length) * 100)
+    : 100;
+
+  const elapsedSeconds = state.mode === "time" ? 60 - timeLeft : elapsedTime;
+  const wpm =
+    elapsedSeconds > 0
+      ? Math.round(correctCharacters / 5 / (elapsedSeconds / 60))
+      : 0;
+
+  const handleStart = () => {
+    setHasVisited(true);
+    localStorage.setItem(FIRST_VISIT_KEY, "true");
+    setTyping("");
+    setElapsedTime(0);
+    setTimeLeft(60);
+    setCompleted(false);
+    setIsRunning(true);
+    textAreaRef.current?.focus();
+  };
+
+  const handleRestart = () => {
+    dispatch(setCurrentText(state.difficulty));
+    setTyping("");
+    setElapsedTime(0);
+    setTimeLeft(60);
+    setCompleted(false);
+    setIsRunning(true);
+    textAreaRef.current?.focus();
+  };
+
+  const finishTest = () => {
+    setIsRunning(false);
+    setCompleted(true);
+  };
 
   const handleTyping: React.ChangeEventHandler<HTMLTextAreaElement> = (
     event,
   ) => {
-    setTyping(event.currentTarget.value);
+    const value = event.currentTarget.value;
+
+    if (!isRunning) {
+      setIsRunning(true);
+    }
+
+    setTyping(value);
+
+    if (value === state.currentText) {
+      finishTest();
+    }
   };
+
+  const renderedText = state.currentText.split("").map((char, index) => {
+    const typedChar = typing[index] ?? "";
+    const isCorrect = typedChar === char;
+    const isCurrent = index === typing.length && isRunning;
+
+    return (
+      <span
+        key={`${char}-${index}`}
+        className={[
+          "char",
+          index < typing.length ? (isCorrect ? "correct" : "incorrect") : "",
+          isCurrent ? "current" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        {char}
+      </span>
+    );
+  });
 
   return (
     <Wrapper className="">
@@ -41,9 +166,11 @@ function App() {
       <div className="typing-container">
         <div className="score-and-settings container">
           <div className="scores-container">
-            <Widget label="WPM">0</Widget>
-            <Widget label="Accuracy">0</Widget>
-            <Widget label="Time">0</Widget>
+            <Widget label="WPM">{wpm}</Widget>
+            <Widget label="Accuracy">{accuracy}%</Widget>
+            <Widget label="Time">
+              {state.mode === "time" ? `${timeLeft}s` : `${elapsedTime}s`}
+            </Widget>
           </div>
           <div className="settings-container">
             <Difficulty />
@@ -51,22 +178,40 @@ function App() {
           </div>
         </div>
         <div className="content">
-          {!hasVisited && <Greeting onStart={() => setHasVisited(true)} />}
+          {!hasVisited && (
+            <Greeting
+              onStart={() => {
+                handleStart();
+              }}
+            />
+          )}
           <div className="container textarea-btn-container">
-            <TypingArea>
-              <div className="shadow-text">{state.currentText}</div>
+            <TypingArea onClick={() => textAreaRef.current?.focus()}>
+              <div className="shadow-text">{renderedText}</div>
 
               <TextArea
+                ref={textAreaRef}
                 className="text-area"
                 value={typing}
-                onChange={(e) => handleTyping(e)}
+                onChange={handleTyping}
+                onFocus={() => {
+                  if (!isRunning) setIsRunning(true);
+                }}
+                autoFocus
               />
             </TypingArea>
             <div className="center-item">
-              <CustomButton
-                btnType="gray"
-                handleButton={() => dispatch(setCurrentText(state.difficulty))}
-              />
+              {completed && (
+                <div className="results-card">
+                  <strong>Test complete!</strong>
+                  <p>
+                    WPM: {wpm} • Accuracy: {accuracy}% • Correct:{" "}
+                    {correctCharacters} • Incorrect:{" "}
+                    {typing.length - correctCharacters}
+                  </p>
+                </div>
+              )}
+              <CustomButton btnType="gray" handleButton={handleRestart} />
             </div>
           </div>
         </div>
