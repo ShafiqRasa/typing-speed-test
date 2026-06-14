@@ -222,9 +222,6 @@ function App() {
                 className="text-area"
                 value={typing}
                 onChange={handleTyping}
-                onFocus={() => {
-                  if (!isRunning) setIsRunning(true);
-                }}
                 autoFocus
               />
             </TypingArea>
