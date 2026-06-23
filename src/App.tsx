@@ -18,9 +18,6 @@ const FIRST_VISIT_KEY = "typing_app_first_visit";
 const SETTINGS_KEY = "typing-speed-test-settings";
 const HIGH_SCORE_KEY = "typing-speed-test-high-score";
 
-// App is a pure layout controller.
-// It handles persistence (localStorage) and renders the top-level shell.
-// All typing-session logic lives in TypingTestPanel.
 function App() {
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.typing);
@@ -70,15 +67,15 @@ function App() {
     localStorage.setItem(
       SETTINGS_KEY,
       JSON.stringify({ difficulty: state.difficulty, mode: state.mode }),
-    );
+    ); // persist SITE settings (mode & difficulty)
   }, [state.difficulty, state.mode]);
 
   useEffect(() => {
-    localStorage.setItem(FIRST_VISIT_KEY, String(state.hasVisited));
+    localStorage.setItem(FIRST_VISIT_KEY, String(state.hasVisited)); // track if the user visit the SITE for the first time, to show a welcome message!
   }, [state.hasVisited]);
 
   useEffect(() => {
-    localStorage.setItem(HIGH_SCORE_KEY, JSON.stringify(state.highScore));
+    localStorage.setItem(HIGH_SCORE_KEY, JSON.stringify(state.highScore)); //persist hight score
   }, [state.highScore]);
 
   return (
