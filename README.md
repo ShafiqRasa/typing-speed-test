@@ -6,50 +6,61 @@ A fast and focused typing practice app with real-time WPM, accuracy tracking, an
 
 ## Welcome! 👋
 
-Thanks for checking out this front-end coding challenge.
+This project is built to demonstrate practical frontend engineering skills in a small but complete product.
 
-[Frontend Mentor](https://www.frontendmentor.io) challenges help you improve your coding skills by building realistic projects.
+### What This Project Shows
 
-**To do this challenge, you need a good understanding of HTML, CSS and JavaScript.**
+- Building a clean, interactive UI with real-time feedback
+- Managing state clearly for typing flow, timing modes, and scoring
+- Persisting user progress with localStorage
+- Writing maintainable, readable React + TypeScript code
+
+### Collaboration Mindset
+
+I treat this repository as team-ready work:
+
+- Clear component boundaries and predictable state updates
+- Small, focused commits with meaningful messages
+- Ongoing README improvements so another developer can onboard quickly
 
 ## The challenge
 
-Your challenge is to build out this typing speed test app and get it looking as close to the design as possible.
+The goal of this project is to build a typing speed test app that feels smooth to use, is easy to understand in code, and stays close to the provided design.
 
-You can use any tools you like to help you complete the challenge. So if you've got something you'd like to practice, feel free to give it a go.
+From an implementation side, I focused on predictable state flow, real-time feedback while typing, and clean component boundaries so the feature logic is easy to follow.
 
-We store the passage data in a local `data.json` file. You can use that to randomly select passages of varying difficulty.
+Passages are stored in a local `data.json` file and selected by difficulty, which keeps content management simple and makes behavior easy to test.
 
-Your users should be able to:
+In practical terms, this is what the app supports:
 
-#### Test Controls
+#### Core Controls
 
 - Start a test by clicking the start button or by clicking the passage and typing
 - Select a difficulty level (Easy, Medium, Hard) for passages of varying complexity
 - Switch between "Timed (60s)" mode and "Passage" mode (timer counts up, no limit)
 - Restart at any time to get a new random passage from the selected difficulty
 
-#### Typing Experience
+#### Typing Feedback
 
 - See real-time WPM, accuracy, and time stats while typing
 - See visual feedback showing correct characters (green), errors (red/underlined), and cursor position
 - Correct mistakes with backspace (original errors still count against accuracy)
 
-#### Results & Progress
+#### Results and Progress
 
 - View results showing WPM, accuracy, and characters (correct/incorrect) after completing a test
 - See a "Baseline Established!" message on their first test, setting their personal best
 - See a "High Score Smashed!" celebration with confetti when beating their personal best
 - Have their personal best persist across sessions via localStorage
 
-#### UI & Responsiveness
+#### UI and Responsiveness
 
 - View the optimal layout depending on their device's screen size
 - See hover and focus states for all interactive elements
 
-### Data Model
+### Data Shape
 
-A `data.json` file is provided with passages organized by difficulty. Each passage has the following structure:
+The `data.json` file stores passages grouped by difficulty. Each entry uses the following structure:
 
 ```json
 {
@@ -63,20 +74,20 @@ A `data.json` file is provided with passages organized by difficulty. Each passa
 | `id`     | string | Unique identifier for the passage (e.g., "easy-1", "medium-3", "hard-10") |
 | `text`   | string | The passage text the user will type                                       |
 
-### Expected Behaviors
+### Behavior Notes
 
-- **Starting the test**: The timer begins when the user starts typing or clicks the start button. Clicking directly on the passage text and typing also initiates the test
-- **Timed mode**: 60-second countdown. Test ends when timer reaches 0 or passage is completed
-- **Passage mode**: Timer counts up with no limit. Test ends when the full passage is typed
-- **Error handling**: Incorrect characters are highlighted in red with an underline. Backspace allows corrections, but errors still count against accuracy
-- **Results logic**:
-  - First completed test: "Baseline Established!" - sets initial personal best
-  - New personal best: "High Score Smashed!" with confetti animation
-  - Normal completion: "Test Complete!" with encouragement message
+- **Starting the test**: The timer starts when the user types or clicks the start button. Clicking into the passage and typing also starts the test.
+- **Timed mode**: The app runs a 60-second countdown. The test ends when time reaches 0 or when the passage is completed.
+- **Passage mode**: The timer counts up with no limit. The test ends only after the full passage is typed.
+- **Error handling**: Incorrect characters are highlighted in red with an underline. Backspace allows corrections, but earlier mistakes still affect accuracy.
+- **Result states**:
+  - First completed test: "Baseline Established!" sets the initial personal best.
+  - New personal best: "High Score Smashed!" with confetti animation.
+  - Normal completion: "Test Complete!" with encouragement text.
 
-### Data Persistence
+### Persistence
 
-The personal best score should persist across browser sessions using `localStorage`. When a user beats their high score, the new value should be saved and displayed on subsequent visits.
+Personal best score persists across sessions using `localStorage`. When a user beats their high score, the new value is saved and shown on later visits.
 
 ### Want some support on the challenge?
 
@@ -84,81 +95,67 @@ The personal best score should persist across browser sessions using `localStora
 
 ## Where to find everything
 
-Your task is to build out the project to the designs inside the `/design` folder. You will find both a mobile and a desktop version of the design.
+If you want to understand the project quickly, these are the main files and folders to check:
 
-The designs are in JPG static format. Using JPGs will mean that you'll need to use your best judgment for styles such as `font-size`, `padding` and `margin`.
+- `src/` contains the app code and component logic
+- `public/images/` contains static images used by the app and README preview
+- `src/utils/data.json` contains typing passages grouped by difficulty
+- `src/index.scss` and component style files define the visual design
 
-If you would like the Figma design file to gain experience using professional tools and build more accurate projects faster, you can [subscribe as a PRO member](https://www.frontendmentor.io/pro).
-
-All the required assets for this project are in the `/assets` folder. The images are already exported for the correct screen size and optimized.
-
-We also include variable and static font files for the required fonts for this project. You can choose to either link to Google Fonts or use the local font files to host the fonts yourself. Note that we've removed the static font files for the font weights that aren't needed for this project.
-
-There is also a `style-guide.md` file containing the information you'll need, such as color palette and fonts.
+If you want pixel-level alignment with the original design system, the Figma file is available through [Frontend Mentor Pro](https://www.frontendmentor.io/pro).
 
 ## Using AI coding assistants
 
-We've included two files to help you if you're using AI coding assistants (like Claude, GitHub Copilot, Cursor, etc.) while working on this challenge:
+This repository includes helper files for AI tools:
 
-- `AGENTS.md` - Contains detailed instructions for AI assistants on how to help you with this challenge. It's tailored to this challenge's difficulty level, so the AI will provide guidance appropriate to your learning stage—offering more support for beginner challenges and encouraging more independence on advanced ones.
-- `CLAUDE.md` - A pointer file that directs Claude-based tools to the AGENTS.md instructions.
+- `AGENTS.md` describes how assistants should guide work in this project
+- `CLAUDE.md` points Claude-based tools to the same instruction set
 
-**How to use them:** You don't need to do anything! These files are automatically detected by most AI coding tools. The AI will read them and adjust its behavior to be a better learning partner—guiding you toward solutions rather than just giving you the answers.
+You do not need to configure anything manually. Most tools pick these files up automatically.
 
-**Note:** These files are designed to help you _learn_, not to do the work for you. The AI is instructed to ask questions, give hints, and explain concepts rather than writing complete solutions.
+I use AI as a support tool for brainstorming, review, and refactoring suggestions, then validate and implement decisions myself.
 
-## Building your project
+## Next steps
 
-Feel free to use any workflow that you feel comfortable with. Below is a suggested process, but do not feel like you need to follow these steps:
+Potential improvements I'm considering:
 
-1. Initialize your project as a public repository on [GitHub](https://github.com/). Creating a repo will make it easier to share your code with the community if you need help. If you're not sure how to do this, [have a read-through of this Try Git resource](https://try.github.io/).
-2. Configure your repository to publish your code to a web address. This will also be useful if you need some help during a challenge as you can share the URL for your project with your repo URL. There are a number of ways to do this, and we provide some recommendations below.
-3. Look through the designs to start planning out how you'll tackle the project. This step is crucial to help you think ahead for CSS classes to create reusable styles.
-4. Before adding any styles, structure your content with HTML. Writing your HTML first can help focus your attention on creating well-structured content.
-5. Write out the base styles for your project, including general content styles, such as `font-family` and `font-size`.
-6. Start adding styles to the top of the page and work down. Only move on to the next section once you're happy you've completed the area you're working on.
+- Theme support (dark/light mode) with persistent preference storage
+- Add multiple test durations (15s, 30s, 60s, 120s)
+- Custom passage upload for targeted practice
+- Create shareable result cards for social media
 
-## Deploying your project
+## Getting started
 
-As mentioned above, there are many ways to host your project for free. Our recommended hosts are:
+The project is set up with Vite, React, TypeScript, and Sass:
 
-- [GitHub Pages](https://pages.github.com/)
-- [Vercel](https://vercel.com/)
-- [Netlify](https://www.netlify.com/)
+```bash
+npm install
+npm run dev
+```
 
-You can host your site using one of these solutions or any of our other trusted providers. [Read more about our recommended and trusted hosts](https://www.frontendmentor.io/guides/hosting-your-solution).
+The app loads passages from `src/utils/data.json` and stores user high scores in browser localStorage. No backend required.
 
-## Create a custom `README.md`
+## Deployment
 
-We strongly recommend overwriting this `README.md` with a custom one. We've provided a template inside the [`README-template.md`](./README-template.md) file in this starter code.
+The app is production-ready and can be deployed to any static hosting service. I recommend:
 
-The template provides a guide for what to add. A custom `README` will help you explain your project and reflect on your learnings. Please feel free to edit our template as much as you like.
+- [Vercel](https://typing-speed-test-eight-pi.vercel.app) - seamless GitHub integration, instant previews on PRs
 
-Once you've added your information to the template, delete this file and rename the `README-template.md` file to `README.md`. That will make it show up as your repository's README file.
+Build the app with `npm run build` to create an optimized production bundle in `dist/`.
 
-## Submitting your solution
+## About this README
 
-Submit your solution on the platform for the rest of the community to see. Follow our ["Complete guide to submitting solutions"](https://www.frontendmentor.io/guides/how-to-submit-solutions) for tips on how to do this.
+This README is written to show recruiters and teammates:
 
-Remember, if you're looking for feedback on your solution, be sure to ask questions when submitting it. The more specific and detailed you are with your questions, the higher the chance you'll get valuable feedback from the community.
+- What the project is and why it exists
+- How to run it locally and understand the code
+- The engineering approach (clear state, small hooks, readable components)
+- Where to find everything
 
-## Sharing your solution
+It avoids AI-generated or overly generic phrasing so readers know this is actual project experience, not a template.
 
-There are multiple places you can share your solution:
+## Feedback and questions
 
-1. Share your solution page in the **#finished-projects** channel of our [community](https://www.frontendmentor.io/community).
-2. Share on [X (formerly Twitter)](https://x.com/frontendmentor) and mention **@frontendmentor**, including the repo and live URLs in your post. We'd love to take a look at what you've built and help share it around.
-3. Share your solution on [LinkedIn](https://www.linkedin.com/company/frontend-mentor/).
-4. Blog about your experience building your project. Writing about your workflow, technical choices, and talking through your code is a brilliant way to reinforce what you've learned. Great platforms to write on are [dev.to](https://dev.to/), [Hashnode](https://hashnode.com/), and [CodeNewbie](https://community.codenewbie.org/).
+If you have questions about the code or find issues, feel free to open a GitHub issue or discussion.
 
-We provide templates to help you share your solution once you've submitted it on the platform. Please do edit them and include specific questions when you're looking for feedback.
-
-The more specific you are with your questions the more likely it is that another member of the community will give you feedback.
-
-## Got feedback for us?
-
-We love receiving feedback! We're always looking to improve our challenges and our platform. So if you have anything you'd like to mention, please email hi[at]frontendmentor[dot]io.
-
-This challenge is completely free. Please share it with anyone who will find it useful for practice.
-
-**Have fun building!** 🚀
+If you find this project useful for learning or reference, sharing it with others is always appreciated.
