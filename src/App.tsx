@@ -1,16 +1,26 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { TextArea, Wrapper, TypingArea } from "./app.styles";
-import NavBar, {
-  CustomButton,
-  Difficulty,
-  Greeting,
-  Mode,
-  TestCompletedMessage,
-  Widget,
-} from "./components";
-import { useAppSelector, useAppDispatch } from "./store/hooks";
-import { setCurrentText, setDifficulty, setMode } from "./store/typingSlice";
+// initial imports
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEventHandler,
+} from "react";
 
+// internal imports
+import { Wrapper } from "./app.styles";
+import NavBar, { ScoreSettingsPanel, TypingTestPanel } from "./components";
+import { useAppSelector, useAppDispatch } from "./store/hooks";
+import {
+  setCurrentText,
+  setDifficulty,
+  setHasVisited,
+  setHighScore,
+  setMode,
+} from "./store/typingSlice";
+import type { DifficultyLevel } from "./utils/typingText";
+
+// CONSTANTS
 const FIRST_VISIT_KEY = "typing_app_first_visit";
 const SETTINGS_KEY = "typing-speed-test-settings";
 const HIGH_SCORE_KEY = "typing-speed-test-high-score";
@@ -19,25 +29,12 @@ function App() {
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.typing);
 
-  const [hasVisited, setHasVisited] = useState(
-    () => localStorage.getItem(FIRST_VISIT_KEY) === "true",
-  );
   const [typing, setTyping] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [celebrateHighScore, setCelebrateHighScore] = useState(false);
-  const [highScore, setHighScore] = useState<{ wpm: number; accuracy: number }>(
-    () => {
-      try {
-        const saved = localStorage.getItem(HIGH_SCORE_KEY);
-        return saved ? JSON.parse(saved) : { wpm: 0, accuracy: 0 };
-      } catch {
-        return { wpm: 0, accuracy: 0 };
-      }
-    },
-  );
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const previousSettings = useRef({
     difficulty: state.difficulty,
@@ -55,10 +52,33 @@ function App() {
       };
 
       if (parsed.difficulty)
-        dispatch(setDifficulty(parsed.difficulty as never));
+        dispatch(setDifficulty(parsed.difficulty as DifficultyLevel));
       if (parsed.mode) dispatch(setMode(parsed.mode));
     } catch {
       localStorage.removeItem(SETTINGS_KEY);
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(setHasVisited(localStorage.getItem(FIRST_VISIT_KEY) === "true"));
+
+    try {
+      const savedScore = localStorage.getItem(HIGH_SCORE_KEY);
+      if (!savedScore) return;
+
+      const parsedScore = JSON.parse(savedScore) as {
+        wpm?: number;
+        accuracy?: number;
+      };
+
+      dispatch(
+        setHighScore({
+          wpm: parsedScore.wpm ?? 0,
+          accuracy: parsedScore.accuracy ?? 0,
+        }),
+      );
+    } catch {
+      localStorage.removeItem(HIGH_SCORE_KEY);
     }
   }, [dispatch]);
 
@@ -68,6 +88,14 @@ function App() {
       JSON.stringify({ difficulty: state.difficulty, mode: state.mode }),
     );
   }, [state.difficulty, state.mode]);
+
+  useEffect(() => {
+    localStorage.setItem(FIRST_VISIT_KEY, String(state.hasVisited));
+  }, [state.hasVisited]);
+
+  useEffect(() => {
+    localStorage.setItem(HIGH_SCORE_KEY, JSON.stringify(state.highScore));
+  }, [state.highScore]);
 
   useEffect(() => {
     const difficultyChanged =
@@ -143,8 +171,7 @@ function App() {
   }, [completed, isRunning, state.mode]);
 
   const handleStart = () => {
-    setHasVisited(true);
-    localStorage.setItem(FIRST_VISIT_KEY, "true");
+    dispatch(setHasVisited(true));
     setCelebrateHighScore(false);
     setTyping("");
     setCompleted(false);
@@ -164,29 +191,27 @@ function App() {
   };
 
   const finishTest = () => {
-    setHighScore((prev) => {
-      const next = {
-        wpm: Math.max(prev.wpm, wpm),
-        accuracy: Math.max(prev.accuracy, accuracy),
-      };
+    const previousHighScore = state.highScore;
+    const nextHighScore = {
+      wpm: Math.max(previousHighScore.wpm, wpm),
+      accuracy: Math.max(previousHighScore.accuracy, accuracy),
+    };
 
-      const isNewBest =
-        wpm > prev.wpm || (wpm === prev.wpm && accuracy > prev.accuracy);
-      if (isNewBest) {
-        setCelebrateHighScore(true);
-      }
+    const isNewBest =
+      wpm > previousHighScore.wpm ||
+      (wpm === previousHighScore.wpm && accuracy > previousHighScore.accuracy);
 
-      localStorage.setItem(HIGH_SCORE_KEY, JSON.stringify(next));
-      return next;
-    });
+    if (isNewBest) {
+      setCelebrateHighScore(true);
+    }
+
+    dispatch(setHighScore(nextHighScore));
 
     setIsRunning(false);
     setCompleted(true);
   };
 
-  const handleTyping: React.ChangeEventHandler<HTMLTextAreaElement> = (
-    event,
-  ) => {
+  const handleTyping: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     const value = event.currentTarget.value;
 
     if (!isRunning) {
@@ -227,120 +252,32 @@ function App() {
 
   return (
     <Wrapper className="">
-      <NavBar bestWpm={highScore.wpm} />
+      <NavBar bestWpm={state.highScore.wpm} />
 
       <div className="typing-container">
-        <div className="score-and-settings container">
-          <div className="scores-container">
-            <Widget label="WPM">{wpm}</Widget>
-            <Widget label="Accuracy">{accuracy}%</Widget>
-            {/* <Widget label="Best WPM">{highScore.wpm}</Widget> */}
-            {/* <Widget label="Best Accuracy">{highScore.accuracy}%</Widget> */}
-            <Widget label="Time">
-              {state.mode === "time" ? `${timeLeft}s` : `${elapsedTime}s`}
-            </Widget>
-          </div>
-          <div className="settings-container">
-            <Difficulty />
-            <Mode />
-          </div>
-        </div>
-        <div className="content">
-          {!hasVisited && (
-            <Greeting
-              onStart={() => {
-                handleStart();
-              }}
-            />
-          )}
-          <div className="container textarea-btn-container">
-            <TypingArea onClick={() => textAreaRef.current?.focus()}>
-              <div className="shadow-text">{renderedText}</div>
+        <ScoreSettingsPanel
+          wpm={wpm}
+          accuracy={accuracy}
+          mode={state.mode}
+          timeLeft={timeLeft}
+          elapsedTime={elapsedTime}
+        />
 
-              <TextArea
-                ref={textAreaRef}
-                className="text-area"
-                value={typing}
-                onChange={handleTyping}
-                autoFocus
-              />
-            </TypingArea>
-            <div className="center-item">
-              {completed && (
-                <>
-                  {celebrateHighScore && (
-                    <>
-                      <div
-                        aria-live="polite"
-                        style={{
-                          position: "absolute",
-                          top: "0.75rem",
-                          left: "50%",
-                          transform: "translateX(-50%)",
-                          zIndex: 10,
-                          display: "grid",
-                          gap: "0.25rem",
-                          textAlign: "center",
-                          pointerEvents: "none",
-                        }}
-                      >
-                        <span style={{ fontSize: "1rem", color: "#fff7a8" }}>
-                          🎉
-                        </span>
-                        <strong
-                          style={{ color: "#fff7a8", fontSize: "0.95rem" }}
-                        >
-                          High Score Smashed!
-                        </strong>
-                      </div>
-                      <div
-                        aria-hidden="true"
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          pointerEvents: "none",
-                          zIndex: 9,
-                          overflow: "hidden",
-                        }}
-                      >
-                        {Array.from({ length: 50 }, (_, index) => (
-                          <span
-                            key={index}
-                            style={{
-                              position: "absolute",
-                              top: "8%",
-                              left: `${8 + (index % 6) * 14}%`,
-                              width: "8px",
-                              height: "18px",
-                              borderRadius: "999px",
-                              background:
-                                index % 3 === 0
-                                  ? "#ffd166"
-                                  : index % 3 === 1
-                                    ? "#7dd3fc"
-                                    : "#86efac",
-                              transform: `rotate(${index * 18}deg) translateY(${index % 2 === 0 ? "0" : "10px"})`,
-                              opacity: 0.95,
-                              animation: `confetti-fall ${1.4 + (index % 4) * 0.15}s ease-out forwards`,
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  )}
-                  <TestCompletedMessage
-                    wpm={wpm}
-                    accuracy={accuracy}
-                    correctCharacters={correctCharacters}
-                    incorrectCharacters={incorrectCharacters}
-                    onRestart={handleRestart}
-                  />
-                </>
-              )}
-              <CustomButton btnType="gray" handleButton={handleRestart} />
-            </div>
-          </div>
-        </div>
+        <TypingTestPanel
+          hasVisited={state.hasVisited}
+          onStart={handleStart}
+          textAreaRef={textAreaRef}
+          typing={typing}
+          onTypingChange={handleTyping}
+          renderedText={renderedText}
+          completed={completed}
+          celebrateHighScore={celebrateHighScore}
+          wpm={wpm}
+          accuracy={accuracy}
+          correctCharacters={correctCharacters}
+          incorrectCharacters={incorrectCharacters}
+          onRestart={handleRestart}
+        />
       </div>
     </Wrapper>
   );
