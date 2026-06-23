@@ -1,15 +1,10 @@
 // initial imports
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEventHandler,
-} from "react";
+import { useEffect, useRef, useState, type ChangeEventHandler } from "react";
 
 // internal imports
 import { Wrapper } from "./app.styles";
 import NavBar, { ScoreSettingsPanel, TypingTestPanel } from "./components";
+import { useTypingStats } from "./hooks/useTypingStats";
 import { useAppSelector, useAppDispatch } from "./store/hooks";
 import {
   setCurrentText,
@@ -119,30 +114,14 @@ function App() {
     return () => window.clearTimeout(timeoutId);
   }, [state.difficulty, state.mode]);
 
-  const typedLength = Math.min(typing.length, state.currentText.length);
-
-  const correctCharacters = useMemo(
-    () =>
-      typing
-        .slice(0, typedLength)
-        .split("")
-        .reduce((count, char, index) => {
-          return count + (char === state.currentText[index] ? 1 : 0);
-        }, 0),
-    [state.currentText, typedLength, typing],
-  );
-
-  const incorrectCharacters = Math.max(typedLength - correctCharacters, 0);
-
-  const accuracy = typedLength
-    ? Math.round((correctCharacters / typedLength) * 100)
-    : 100;
-
-  const elapsedSeconds = state.mode === "time" ? 60 - timeLeft : elapsedTime;
-  const wpm =
-    elapsedSeconds > 0
-      ? Math.round(correctCharacters / 5 / (elapsedSeconds / 60))
-      : 0;
+  const { correctCharacters, incorrectCharacters, accuracy, wpm } =
+    useTypingStats(
+      typing,
+      state.currentText,
+      state.mode,
+      timeLeft,
+      elapsedTime,
+    );
 
   useEffect(() => {
     if (!isRunning || completed) return undefined;
