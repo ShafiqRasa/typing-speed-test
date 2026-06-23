@@ -1,15 +1,16 @@
-import type { ChangeEventHandler, ReactNode, RefObject } from "react";
+import type { ChangeEventHandler, RefObject } from "react";
 import { TextArea, TypingArea } from "../../app.styles";
 import { CustomButton, Greeting, TestCompletedMessage } from "..";
 import HighScoreCelebration from "../high-score-celebration/high-score-celebration";
+import TypingRenderedText from "../typing-rendered-text/typing-rendered-text";
 
 type TypingTestPanelProps = {
   hasVisited: boolean;
   onStart: () => void;
   textAreaRef: RefObject<HTMLTextAreaElement | null>;
+  currentText: string;
   typing: string;
   onTypingChange: ChangeEventHandler<HTMLTextAreaElement>;
-  renderedText: ReactNode[];
   completed: boolean;
   celebrateHighScore: boolean;
   wpm: number;
@@ -24,9 +25,9 @@ const TypingTestPanel = ({
   hasVisited,
   onStart,
   textAreaRef,
+  currentText,
   typing,
   onTypingChange,
-  renderedText,
   completed,
   celebrateHighScore,
   wpm,
@@ -40,7 +41,13 @@ const TypingTestPanel = ({
       {!hasVisited && <Greeting onStart={onStart} />}
       <div className="container textarea-btn-container">
         <TypingArea onClick={() => textAreaRef.current?.focus()}>
-          <div className="shadow-text">{renderedText}</div>
+          <div className="shadow-text">
+            <TypingRenderedText
+              currentText={currentText}
+              typing={typing}
+              completed={completed}
+            />
+          </div>
 
           <TextArea
             ref={textAreaRef}
