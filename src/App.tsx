@@ -1,13 +1,11 @@
 // initial imports
-import { useEffect, useRef, useState, type ChangeEventHandler } from "react";
+import { useEffect } from "react";
 
 // internal imports
 import { Wrapper } from "./app.styles";
-import NavBar, { ScoreSettingsPanel, TypingTestPanel } from "./components";
-import { useTypingStats } from "./hooks/useTypingStats";
+import NavBar, { TypingTestPanel } from "./components";
 import { useAppSelector, useAppDispatch } from "./store/hooks";
 import {
-  setCurrentText,
   setDifficulty,
   setHasVisited,
   setHighScore,
@@ -20,21 +18,12 @@ const FIRST_VISIT_KEY = "typing_app_first_visit";
 const SETTINGS_KEY = "typing-speed-test-settings";
 const HIGH_SCORE_KEY = "typing-speed-test-high-score";
 
+// App is a pure layout controller.
+// It handles persistence (localStorage) and renders the top-level shell.
+// All typing-session logic lives in TypingTestPanel.
 function App() {
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.typing);
-
-  const [typing, setTyping] = useState("");
-  const [isRunning, setIsRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60);
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [completed, setCompleted] = useState(false);
-  const [celebrateHighScore, setCelebrateHighScore] = useState(false);
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
-  const previousSettings = useRef({
-    difficulty: state.difficulty,
-    mode: state.mode,
-  });
 
   useEffect(() => {
     const saved = localStorage.getItem(SETTINGS_KEY);
@@ -92,147 +81,10 @@ function App() {
     localStorage.setItem(HIGH_SCORE_KEY, JSON.stringify(state.highScore));
   }, [state.highScore]);
 
-  useEffect(() => {
-    const difficultyChanged =
-      previousSettings.current.difficulty !== state.difficulty;
-    const modeChanged = previousSettings.current.mode !== state.mode;
-
-    if (!difficultyChanged && !modeChanged) return undefined;
-
-    const timeoutId = window.setTimeout(() => {
-      setTyping("");
-      setElapsedTime(0);
-      setTimeLeft(60);
-      setCompleted(false);
-      setIsRunning(false);
-      previousSettings.current = {
-        difficulty: state.difficulty,
-        mode: state.mode,
-      };
-    }, 0);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [state.difficulty, state.mode]);
-
-  const { correctCharacters, incorrectCharacters, accuracy, wpm } =
-    useTypingStats(
-      typing,
-      state.currentText,
-      state.mode,
-      timeLeft,
-      elapsedTime,
-    );
-
-  useEffect(() => {
-    if (!isRunning || completed) return undefined;
-
-    if (state.mode === "time") {
-      const timer = window.setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            window.clearInterval(timer);
-            setIsRunning(false);
-            setCompleted(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => window.clearInterval(timer);
-    }
-
-    const timer = window.setInterval(() => {
-      setElapsedTime((prev) => prev + 1);
-    }, 1000);
-
-    return () => window.clearInterval(timer);
-  }, [completed, isRunning, state.mode]);
-
-  const handleStart = () => {
-    dispatch(setHasVisited(true));
-    setCelebrateHighScore(false);
-    setTyping("");
-    setCompleted(false);
-    setIsRunning(true);
-    textAreaRef.current?.focus();
-  };
-
-  const handleRestart = () => {
-    dispatch(setCurrentText(state.difficulty));
-    setCelebrateHighScore(false);
-    setTyping("");
-    setElapsedTime(0);
-    setTimeLeft(60);
-    setCompleted(false);
-    setIsRunning(true);
-    textAreaRef.current?.focus();
-  };
-
-  const finishTest = () => {
-    const previousHighScore = state.highScore;
-    const nextHighScore = {
-      wpm: Math.max(previousHighScore.wpm, wpm),
-      accuracy: Math.max(previousHighScore.accuracy, accuracy),
-    };
-
-    const isNewBest =
-      wpm > previousHighScore.wpm ||
-      (wpm === previousHighScore.wpm && accuracy > previousHighScore.accuracy);
-
-    if (isNewBest) {
-      setCelebrateHighScore(true);
-    }
-
-    dispatch(setHighScore(nextHighScore));
-
-    setIsRunning(false);
-    setCompleted(true);
-  };
-
-  const handleTyping: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
-    const value = event.currentTarget.value;
-
-    if (!isRunning) {
-      setIsRunning(true);
-    }
-
-    setTyping(value);
-
-    if (value.length === state.currentText.length) {
-      finishTest();
-    }
-  };
-
   return (
-    <Wrapper className="">
+    <Wrapper>
       <NavBar bestWpm={state.highScore.wpm} />
-
-      <div className="typing-container">
-        <ScoreSettingsPanel
-          wpm={wpm}
-          accuracy={accuracy}
-          mode={state.mode}
-          timeLeft={timeLeft}
-          elapsedTime={elapsedTime}
-        />
-
-        <TypingTestPanel
-          hasVisited={state.hasVisited}
-          onStart={handleStart}
-          textAreaRef={textAreaRef}
-          currentText={state.currentText}
-          typing={typing}
-          onTypingChange={handleTyping}
-          completed={completed}
-          celebrateHighScore={celebrateHighScore}
-          wpm={wpm}
-          accuracy={accuracy}
-          correctCharacters={correctCharacters}
-          incorrectCharacters={incorrectCharacters}
-          onRestart={handleRestart}
-        />
-      </div>
+      <TypingTestPanel />
     </Wrapper>
   );
 }
