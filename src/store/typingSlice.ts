@@ -7,16 +7,25 @@ import {
   type DifficultyLevel,
 } from "../utils/typingText";
 
+export type HighScore = {
+  wpm: number;
+  accuracy: number;
+};
+
 type TypingState = {
   difficulty: DifficultyLevel;
   mode: "time" | "passage";
   currentText: string;
+  hasVisited: boolean;
+  highScore: HighScore;
 };
 
 const initialState: TypingState = {
   difficulty: "easy",
   mode: "passage",
   currentText: getTextForDifficulty("easy"),
+  hasVisited: false,
+  highScore: { wpm: 0, accuracy: 0 },
 };
 
 export const typingSlice = createSlice({
@@ -39,9 +48,21 @@ export const typingSlice = createSlice({
     setMode: (state, action: PayloadAction<TypingState["mode"]>) => {
       state.mode = action.payload;
     },
+    setHasVisited: (state, action: PayloadAction<boolean>) => {
+      state.hasVisited = action.payload;
+    },
+    setHighScore: (state, action: PayloadAction<HighScore>) => {
+      state.highScore = action.payload;
+    },
   },
 });
 
-export const { setCurrentText, setDifficulty, setMode } = typingSlice.actions;
+export const {
+  setCurrentText,
+  setDifficulty,
+  setMode,
+  setHasVisited,
+  setHighScore,
+} = typingSlice.actions;
 
 export default typingSlice.reducer;
