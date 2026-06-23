@@ -110,18 +110,17 @@ const TypingTestPanel = () => {
 
   const finishTest = () => {
     const previousHighScore = state.highScore;
-    const nextHighScore = {
-      wpm: Math.max(previousHighScore.wpm, wpm),
-      accuracy: Math.max(previousHighScore.accuracy, accuracy),
-    };
 
-    const isNewBest =
-      wpm > previousHighScore.wpm ||
-      (wpm === previousHighScore.wpm && accuracy > previousHighScore.accuracy);
+    const isNewBest = wpm > previousHighScore.wpm;
 
     if (isNewBest) {
       setCelebrateHighScore(true);
     }
+
+    const nextHighScore = {
+      wpm: Math.max(previousHighScore.wpm, wpm),
+      accuracy: Math.max(previousHighScore.accuracy, accuracy),
+    };
 
     dispatch(setHighScore(nextHighScore));
     setIsRunning(false);
