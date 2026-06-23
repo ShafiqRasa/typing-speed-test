@@ -11,16 +11,7 @@ const HighScoreCelebration = () => {
         <span>🎉</span>
         <strong>High Score Smashed!</strong>
       </HighScoreMessage>
-      <HighScoredSmashed
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          zIndex: 9,
-          overflow: "hidden",
-        }}
-      >
+      <HighScoredSmashed aria-hidden="true">
         {Array.from({ length: 50 }, (_, index) => (
           <span
             key={index}

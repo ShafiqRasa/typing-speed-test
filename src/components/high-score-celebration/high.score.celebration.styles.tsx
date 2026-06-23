@@ -14,4 +14,10 @@ export const HighScoreMessage = styled.div`
   font-size: 1rem;
 `;
 
-export const HighScoredSmashed = styled.div``;
+export const HighScoredSmashed = styled.div`
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9;
+  overflow: hidden;
+`;
